@@ -420,7 +420,14 @@
             var commandLine = Environment.GetCommandLineArgs();
             if (commandLine.Length == 1)
             {
-                Add.Execute(null);
+                if(recentFilePathList.Any())
+                {                  
+                    ProcessCommandLine(recentFilePathList.Take(1));
+                }
+                else
+                {
+                    Add.Execute(null);
+                }
             }
             else
             {
@@ -696,7 +703,7 @@
             {
                 Source = source,
                 Path = new PropertyPath(path),
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
             };
         }
 
