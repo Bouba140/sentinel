@@ -234,7 +234,7 @@
                 </RibbonGroup>
                 <RibbonGroup Header="Search" IsEnabled="True">
                     <StackPanel>
-                        <RibbonTextBox Name="SearchRibbonTextBox" TextBoxWidth="200" />
+                        <RibbonTextBox Name="SearchRibbonTextBox" TextBoxWidth="300" />
                         
                         <ComboBox Name="SearchTargetComboBox" HorizontalAlignment="Left" Margin="5,0,0,0" MinWidth="100" IsEditable="True" IsReadOnly="True" ItemsSource="{Binding Source={StaticResource LogEntryField}}" />
 
@@ -247,6 +247,9 @@
                                               HorizontalAlignment="Left"                                              
                                               VerticalContentAlignment="Center" Checked="SearchToggleButtonChecked" />
                             <RibbonToggleButton x:Name="ExtractToggleButton" Margin="20,0,0,0" Label="Extract"
+                                              HorizontalAlignment="Left"                                              
+                                              VerticalContentAlignment="Center" Checked="SearchToggleButtonChecked" />
+                            <RibbonToggleButton x:Name="FindToggleButton" Margin="20,0,0,0" Label="Find"
                                               HorizontalAlignment="Left"                                              
                                               VerticalContentAlignment="Center" Checked="SearchToggleButtonChecked" />                            
                         </StackPanel>

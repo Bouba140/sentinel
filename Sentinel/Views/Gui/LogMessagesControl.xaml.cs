@@ -80,6 +80,13 @@
             ScrollingHelper.ScrollToEnd(Dispatcher, messages);
         }
 
+        public void ScrollToItem()
+        {
+            var listBox = messages as ListBox;
+            var item = listBox.Items[0] as ListBoxItem;
+            ScrollingHelper.ScrollToItem(Dispatcher, messages, item);
+        }
+
         private void SetTypeColumnPreferences(int selectedTypeOption)
         {
             // TODO: to cope with resorting of columns, this code should search for the column, not assume it is the first.

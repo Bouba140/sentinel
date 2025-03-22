@@ -12,7 +12,7 @@
         public void Initialise()
         {
             Name = "SearchExtractor";
-            Field = LogEntryFields.System;
+            Field = LogEntryFields.Description;
             Pattern = string.Empty;
         }
     }

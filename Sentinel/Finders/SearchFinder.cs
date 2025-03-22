@@ -1,16 +1,16 @@
-﻿namespace Sentinel.Filters
+namespace Sentinel.Finders
 {
     using System.Runtime.Serialization;
 
-    using Sentinel.Filters.Interfaces;
+    using Sentinel.Finders.Interfaces;
     using Sentinel.Interfaces;
 
     [DataContract]
-    public class SearchFilter : Filter, IDefaultInitialisation, ISearchFilter
+    public class SearchFinder : Finder, IDefaultInitialisation, ISearchFinder
     {
         public void Initialise()
         {
-            Name = "SearchFilter";
+            Name = "Finder";
             Field = LogEntryFields.Description;
             Pattern = string.Empty;
         }

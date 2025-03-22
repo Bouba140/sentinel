@@ -18,6 +18,8 @@
     using Sentinel.FileMonitor;
     using Sentinel.Filters;
     using Sentinel.Filters.Interfaces;
+    using Sentinel.Finders;
+    using Sentinel.Finders.Interfaces;
     using Sentinel.Highlighters;
     using Sentinel.Highlighters.Interfaces;
     using Sentinel.Images;
@@ -198,6 +200,7 @@
             var locator = ServiceLocator.Instance;
             viewModelBases.Add((SearchExtractor)locator.Get<ISearchExtractor>());
             viewModelBases.Add((SearchFilter)locator.Get<ISearchFilter>());
+            viewModelBases.Add((SearchFinder)locator.Get<ISearchFinder>());
             viewModelBases.Add((HighlightingService<IHighlighter>)locator.Get<IHighlightingService<IHighlighter>>());
             viewModelBases.Add((ExtractingService<IExtractor>)locator.Get<IExtractingService<IExtractor>>());
             viewModelBases.Add((FilteringService<IFilter>)locator.Get<IFilteringService<IFilter>>());
@@ -235,6 +238,10 @@
                     else if (typeString.Contains(typeof(SearchFilter).Name))
                     {
                         locator.Register<ISearchFilter>(JsonHelper.DeserializeFromString<SearchFilter>(objString));
+                    }
+                    else if (typeString.Contains(typeof(SearchFinder).Name))
+                    {
+                        locator.Register<ISearchFinder>(JsonHelper.DeserializeFromString<SearchFinder>(objString));
                     }
                     else if (typeString.Contains(typeof(SearchExtractor).Name))
                     {
@@ -363,6 +370,7 @@
 
             locator.Register(typeof(IUserPreferences), typeof(UserPreferences), true);
             locator.Register(typeof(ISearchFilter), typeof(SearchFilter), true);
+            locator.Register(typeof(ISearchFinder), typeof(SearchFinder), true);
             locator.Register(typeof(ISearchExtractor), typeof(SearchExtractor), true);
             locator.Register(typeof(IFilteringService<IFilter>), typeof(FilteringService<IFilter>), true);
             locator.Register(typeof(IExtractingService<IExtractor>), typeof(ExtractingService<IExtractor>), true);

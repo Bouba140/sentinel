@@ -21,6 +21,7 @@
     using Sentinel.Classification.Interfaces;
     using Sentinel.Extractors.Interfaces;
     using Sentinel.Filters.Interfaces;
+    using Sentinel.Finders.Interfaces;
     using Sentinel.Highlighters.Interfaces;
     using Sentinel.Interfaces;
     using Sentinel.Interfaces.CodeContracts;
@@ -132,6 +133,7 @@
 
         // ReSharper disable once MemberCanBePrivate.Global
         public ISearchExtractor SearchExtractor => ServiceLocator.Instance.Get<ISearchExtractor>();
+        public ISearchFinder Finder => ServiceLocator.Instance.Get<ISearchFinder>();
 
         // ReSharper disable once MemberCanBePrivate.Global
         public ObservableCollection<string> RecentFiles { get; private set; }
@@ -684,6 +686,9 @@
                 case "Extract":
                     BindSearchToSearchExtractor();
                     break;
+                case "Find":
+                    BindFindToFinder();
+                    break;
             }
         }
 
@@ -694,7 +699,19 @@
             SearchTargetComboBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Field", SearchExtractor));
 
             HighlightToggleButton.IsChecked = false;
+            FindToggleButton.IsChecked = false;
             FilterToggleButton.IsChecked = false;
+        }
+
+        private void BindFindToFinder()
+        {
+            SearchRibbonTextBox.SetBinding(TextBox.TextProperty, CreateBinding("Pattern", Finder));
+            SearchModeListBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Mode", Finder));
+            SearchTargetComboBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Field", Finder));
+
+            HighlightToggleButton.IsChecked = false;
+            FilterToggleButton.IsChecked = false;
+            ExtractToggleButton.IsChecked = false;
         }
 
         private Binding CreateBinding(string path, object source)
@@ -714,6 +731,7 @@
             SearchTargetComboBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Field", SearchFilter));
             HighlightToggleButton.IsChecked = false;
             ExtractToggleButton.IsChecked = false;
+            FindToggleButton.IsChecked = false;
         }
 
         private void BindSearchToSearchHighlighter()
@@ -723,6 +741,7 @@
             SearchTargetComboBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Field", Search));
             FilterToggleButton.IsChecked = false;
             ExtractToggleButton.IsChecked = false;
+            FindToggleButton.IsChecked = false;
         }
 
         private void RemoveBindingReferences()
@@ -864,6 +883,7 @@
             HighlightToggleButton.SetBinding(ToggleButton.IsCheckedProperty, CreateBinding("Enabled", Search));
             FilterToggleButton.SetBinding(ToggleButton.IsCheckedProperty, CreateBinding("Enabled", SearchFilter));
             ExtractToggleButton.SetBinding(ToggleButton.IsCheckedProperty, CreateBinding("Enabled", SearchExtractor));
+            FindToggleButton.SetBinding(ToggleButton.IsCheckedProperty, CreateBinding("Enabled", Finder));
 
             if (Search.Enabled)
             {
