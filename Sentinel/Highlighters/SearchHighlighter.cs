@@ -93,8 +93,8 @@ namespace Sentinel.Highlighters
                         Background = Colors.Lime,
                         Foreground = Colors.Fuchsia,
                     },
-                Field = LogEntryFields.System,
-                Mode = MatchMode.CaseSensitive,
+                Field = LogEntryFields.Description,
+                Mode = MatchMode.CaseInsensitive,
             };
 
             Search = string.Empty;

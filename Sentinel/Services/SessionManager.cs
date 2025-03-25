@@ -202,6 +202,7 @@
             viewModelBases.Add((SearchFilter)locator.Get<ISearchFilter>());
             viewModelBases.Add((SearchFinder)locator.Get<ISearchFinder>());
             viewModelBases.Add((HighlightingService<IHighlighter>)locator.Get<IHighlightingService<IHighlighter>>());
+            viewModelBases.Add((FinderService<IFinder>)locator.Get<IFinderService<IFinder>>());
             viewModelBases.Add((ExtractingService<IExtractor>)locator.Get<IExtractingService<IExtractor>>());
             viewModelBases.Add((FilteringService<IFilter>)locator.Get<IFilteringService<IFilter>>());
             viewModelBases.Add((ClassifyingService<IClassifier>)locator.Get<IClassifyingService<IClassifier>>());
@@ -238,10 +239,6 @@
                     else if (typeString.Contains(typeof(SearchFilter).Name))
                     {
                         locator.Register<ISearchFilter>(JsonHelper.DeserializeFromString<SearchFilter>(objString));
-                    }
-                    else if (typeString.Contains(typeof(SearchFinder).Name))
-                    {
-                        locator.Register<ISearchFinder>(JsonHelper.DeserializeFromString<SearchFinder>(objString));
                     }
                     else if (typeString.Contains(typeof(SearchExtractor).Name))
                     {
@@ -372,6 +369,7 @@
             locator.Register(typeof(ISearchFilter), typeof(SearchFilter), true);
             locator.Register(typeof(ISearchFinder), typeof(SearchFinder), true);
             locator.Register(typeof(ISearchExtractor), typeof(SearchExtractor), true);
+            locator.Register(typeof(IFinderService<IFinder>), typeof(FinderService<IFinder>), true);
             locator.Register(typeof(IFilteringService<IFilter>), typeof(FilteringService<IFilter>), true);
             locator.Register(typeof(IExtractingService<IExtractor>), typeof(ExtractingService<IExtractor>), true);
             locator.Register(

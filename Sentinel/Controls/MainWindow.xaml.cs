@@ -134,6 +134,7 @@
         // ReSharper disable once MemberCanBePrivate.Global
         public ISearchExtractor SearchExtractor => ServiceLocator.Instance.Get<ISearchExtractor>();
         public ISearchFinder Finder => ServiceLocator.Instance.Get<ISearchFinder>();
+        public IFinderService<IFinder> FinderService => ServiceLocator.Instance.Get<IFinderService<IFinder>>();
 
         // ReSharper disable once MemberCanBePrivate.Global
         public ObservableCollection<string> RecentFiles { get; private set; }
@@ -701,6 +702,8 @@
             HighlightToggleButton.IsChecked = false;
             FindToggleButton.IsChecked = false;
             FilterToggleButton.IsChecked = false;
+            FindNextButton.Visibility = Visibility.Hidden;
+            FindPreviousButton.Visibility = Visibility.Hidden;
         }
 
         private void BindFindToFinder()
@@ -712,6 +715,8 @@
             HighlightToggleButton.IsChecked = false;
             FilterToggleButton.IsChecked = false;
             ExtractToggleButton.IsChecked = false;
+            FindNextButton.Visibility = Visibility.Visible;
+            FindPreviousButton.Visibility = Visibility.Visible;
         }
 
         private Binding CreateBinding(string path, object source)
@@ -732,6 +737,8 @@
             HighlightToggleButton.IsChecked = false;
             ExtractToggleButton.IsChecked = false;
             FindToggleButton.IsChecked = false;
+            FindNextButton.Visibility = Visibility.Hidden;
+            FindPreviousButton.Visibility = Visibility.Hidden;
         }
 
         private void BindSearchToSearchHighlighter()
@@ -742,6 +749,8 @@
             FilterToggleButton.IsChecked = false;
             ExtractToggleButton.IsChecked = false;
             FindToggleButton.IsChecked = false;
+            FindNextButton.Visibility = Visibility.Hidden;
+            FindPreviousButton.Visibility = Visibility.Hidden;
         }
 
         private void RemoveBindingReferences()
@@ -884,6 +893,8 @@
             FilterToggleButton.SetBinding(ToggleButton.IsCheckedProperty, CreateBinding("Enabled", SearchFilter));
             ExtractToggleButton.SetBinding(ToggleButton.IsCheckedProperty, CreateBinding("Enabled", SearchExtractor));
             FindToggleButton.SetBinding(ToggleButton.IsCheckedProperty, CreateBinding("Enabled", Finder));
+            FindNextButton.SetBinding(Button.CommandProperty, CreateBinding("FindNext", FinderService));
+            FindPreviousButton.SetBinding(Button.CommandProperty, CreateBinding("FindPrevious", FinderService));
 
             if (Search.Enabled)
             {
@@ -896,6 +907,10 @@
             else if (SearchExtractor.Enabled)
             {
                 BindSearchToSearchExtractor();
+            }
+            else if(Finder.Enabled)
+            {
+                BindFindToFinder();
             }
         }
 

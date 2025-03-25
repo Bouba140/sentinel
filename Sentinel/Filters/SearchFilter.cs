@@ -12,6 +12,7 @@
         {
             Name = "SearchFilter";
             Field = LogEntryFields.Description;
+            Mode =  MatchMode.CaseInsensitive;
             Pattern = string.Empty;
         }
     }

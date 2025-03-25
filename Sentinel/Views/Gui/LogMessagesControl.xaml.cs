@@ -9,6 +9,7 @@
     using System.Windows.Data;
     using System.Windows.Input;
     using log4net;
+    using Sentinel.Finders.Interfaces;
     using Sentinel.Highlighters;
     using Sentinel.Highlighters.Interfaces;
     using Sentinel.Interfaces;
@@ -43,6 +44,10 @@
             {
                 ((INotifyPropertyChanged)searchHighlighter.Highlighter).PropertyChanged += (s, e) => UpdateStyles();
             }
+
+            var searchFinder = ServiceLocator.Instance.Get<IFinderService<IFinder>>();
+            searchFinder.OnFind += ScrollToItem;
+            searchFinder.Messages = messages;
 
             messages.ItemContainerStyleSelector = new HighlightingSelector(Messages_OnMouseDoubleClick);
 
@@ -80,11 +85,11 @@
             ScrollingHelper.ScrollToEnd(Dispatcher, messages);
         }
 
-        public void ScrollToItem()
+        public void ScrollToItem(ILogEntry message)
         {
             var listBox = messages as ListBox;
             var item = listBox.Items[0] as ListBoxItem;
-            ScrollingHelper.ScrollToItem(Dispatcher, messages, item);
+            ScrollingHelper.ScrollToItem(Dispatcher, messages, message);
         }
 
         private void SetTypeColumnPreferences(int selectedTypeOption)

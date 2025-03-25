@@ -9,12 +9,8 @@ namespace Sentinel.Finders
 
     using WpfExtras;
 
-    [DataContract]
     public class Finder : ViewModelBase, IFinder
     {
-        /// <summary>
-        /// Is the filter enabled?  If so, it will remove anything matching from the output.
-        /// </summary>
         private bool enabled;
 
         private string name;

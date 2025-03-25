@@ -13,6 +13,7 @@
         {
             Name = "SearchExtractor";
             Field = LogEntryFields.Description;
+            Mode = MatchMode.CaseInsensitive;
             Pattern = string.Empty;
         }
     }

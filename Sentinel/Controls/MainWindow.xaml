@@ -236,8 +236,18 @@
                     <StackPanel>
                         <RibbonTextBox Name="SearchRibbonTextBox" TextBoxWidth="300" />
                         
-                        <ComboBox Name="SearchTargetComboBox" HorizontalAlignment="Left" Margin="5,0,0,0" MinWidth="100" IsEditable="True" IsReadOnly="True" ItemsSource="{Binding Source={StaticResource LogEntryField}}" />
-
+                        <StackPanel Orientation="Horizontal">
+                            <ComboBox Name="SearchTargetComboBox" HorizontalAlignment="Left" Margin="5,0,0,0" MinWidth="100" IsEditable="True" IsReadOnly="True" ItemsSource="{Binding Source={StaticResource LogEntryField}}" />
+                            <RibbonButton x:Name="FindPreviousButton"
+                                          Command="{Binding FindPrevious}"
+                                          Visibility="Hidden"
+                                          Label="Previous" />
+                    
+                            <RibbonButton x:Name="FindNextButton"
+                                          Command="{Binding FindNext}"
+                                          Visibility="Hidden"
+                                          Label="Next" />
+                        </StackPanel>
                         <StackPanel Orientation="Horizontal">
 
                             <RibbonToggleButton x:Name="HighlightToggleButton" Margin="5,0,0,0" Label="Highlight"
