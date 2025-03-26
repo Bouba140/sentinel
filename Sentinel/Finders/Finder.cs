@@ -8,7 +8,8 @@ namespace Sentinel.Finders
     using Sentinel.Interfaces;
 
     using WpfExtras;
-
+    
+    [DataContract]
     public class Finder : ViewModelBase, IFinder
     {
         private bool enabled;

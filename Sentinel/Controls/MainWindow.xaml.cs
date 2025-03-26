@@ -33,6 +33,7 @@
     using Sentinel.Services.Interfaces;
     using Sentinel.StartUp;
     using Sentinel.Support;
+    using Sentinel.Views.Gui;
     using Sentinel.Views.Interfaces;
     using WpfExtras;
     using WpfExtras.Converters;
@@ -134,7 +135,6 @@
         // ReSharper disable once MemberCanBePrivate.Global
         public ISearchExtractor SearchExtractor => ServiceLocator.Instance.Get<ISearchExtractor>();
         public ISearchFinder Finder => ServiceLocator.Instance.Get<ISearchFinder>();
-        public IFinderService<IFinder> FinderService => ServiceLocator.Instance.Get<IFinderService<IFinder>>();
 
         // ReSharper disable once MemberCanBePrivate.Global
         public ObservableCollection<string> RecentFiles { get; private set; }
@@ -694,7 +694,7 @@
         }
 
         private void BindSearchToSearchExtractor()
-        {
+        {            
             SearchRibbonTextBox.SetBinding(TextBox.TextProperty, CreateBinding("Pattern", SearchExtractor));
             SearchModeListBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Mode", SearchExtractor));
             SearchTargetComboBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Field", SearchExtractor));
@@ -730,7 +730,7 @@
         }
 
         private void BindSearchToSearchFilter()
-        {
+        {            
             SearchRibbonTextBox.SetBinding(TextBox.TextProperty, CreateBinding("Pattern", SearchFilter));
             SearchModeListBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Mode", SearchFilter));
             SearchTargetComboBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Field", SearchFilter));
@@ -866,6 +866,14 @@
                 ItemsControl.ItemsSourceProperty,
                 new Binding { Source = customClassifyiers });
 
+
+            var currentPresenter = ViewManager?.Viewers?.FirstOrDefault()?.PrimaryView?.Presenter;
+            if(currentPresenter is LogMessagesControl)
+            {
+                FindNextButton.SetBinding(Button.CommandProperty, CreateBinding("FindNext", currentPresenter));
+                FindPreviousButton.SetBinding(Button.CommandProperty, CreateBinding("FindPrevious", currentPresenter));
+            }
+
             BindToSearchElements();
 
             // Column view buttons
@@ -893,8 +901,6 @@
             FilterToggleButton.SetBinding(ToggleButton.IsCheckedProperty, CreateBinding("Enabled", SearchFilter));
             ExtractToggleButton.SetBinding(ToggleButton.IsCheckedProperty, CreateBinding("Enabled", SearchExtractor));
             FindToggleButton.SetBinding(ToggleButton.IsCheckedProperty, CreateBinding("Enabled", Finder));
-            FindNextButton.SetBinding(Button.CommandProperty, CreateBinding("FindNext", FinderService));
-            FindPreviousButton.SetBinding(Button.CommandProperty, CreateBinding("FindPrevious", FinderService));
 
             if (Search.Enabled)
             {
