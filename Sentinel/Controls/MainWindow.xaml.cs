@@ -719,13 +719,13 @@
             FindPreviousButton.Visibility = Visibility.Visible;
         }
 
-        private Binding CreateBinding(string path, object source)
+        private Binding CreateBinding(string path, object source, UpdateSourceTrigger trigger = UpdateSourceTrigger.PropertyChanged)
         {
             return new Binding
             {
                 Source = source,
                 Path = new PropertyPath(path),
-                UpdateSourceTrigger = UpdateSourceTrigger.LostFocus,
+                UpdateSourceTrigger = trigger,
             };
         }
 
@@ -870,8 +870,8 @@
             var currentPresenter = ViewManager?.Viewers?.FirstOrDefault()?.PrimaryView?.Presenter;
             if(currentPresenter is LogMessagesControl)
             {
-                FindNextButton.SetBinding(Button.CommandProperty, CreateBinding("FindNext", currentPresenter));
-                FindPreviousButton.SetBinding(Button.CommandProperty, CreateBinding("FindPrevious", currentPresenter));
+                FindNextButton.SetBinding(Button.CommandProperty, CreateBinding("FindNext", currentPresenter, UpdateSourceTrigger.LostFocus));
+                FindPreviousButton.SetBinding(Button.CommandProperty, CreateBinding("FindPrevious", currentPresenter, UpdateSourceTrigger.LostFocus));
             }
 
             BindToSearchElements();

@@ -241,12 +241,14 @@
                             <RibbonButton x:Name="FindPreviousButton"
                                           Command="{Binding FindPrevious}"
                                           Visibility="Hidden"
-                                          Label="Previous" />
+                                          Label="Previous" 
+                                          Margin="10,0,0,0"/>
                     
                             <RibbonButton x:Name="FindNextButton"
                                           Command="{Binding FindNext}"
                                           Visibility="Hidden"
-                                          Label="Next" />
+                                          Label="Next" 
+                                          Margin="5,0,0,0"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
 

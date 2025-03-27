@@ -43,7 +43,7 @@ namespace Sentinel.Finders
         public bool IsMatch(ILogEntry entry)
         {
             var searchFinder = SearchFinders.FirstOrDefault();
-            if (searchFinder == null)
+            if (searchFinder == null || !searchFinder.Enabled)
             {
                 return false;
             }
