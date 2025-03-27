@@ -185,6 +185,11 @@
                                           SmallImageSource="/Resources/Small/Export.png"
                                           Label="Export Logs" />
                     
+                    <RibbonButton ToolTip="Import logs from a file"
+                                          Command="{Binding ImportLogs}"
+                                          SmallImageSource="/Resources/Small/Export.png"
+                                          Label="Import Logs" />
+                    
                     <RibbonButton ToolTip="Show the Preferences dialog"
                                           Command="{Binding ShowPreferences}"
                                           CommandParameter="0"

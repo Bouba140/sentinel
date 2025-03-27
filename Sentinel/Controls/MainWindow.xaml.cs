@@ -94,6 +94,9 @@
         public ICommand ExportLogs { get; private set; }
 
         // ReSharper disable once MemberCanBePrivate.Global
+        public ICommand ImportLogs { get; private set; }
+
+        // ReSharper disable once MemberCanBePrivate.Global
         public ICommand Exit { get; private set; }
 
         // ReSharper disable once MemberCanBePrivate.Global
@@ -214,6 +217,32 @@
             }
 
             frame.Log.Enabled = restartLogging;
+        }
+
+        private void OpenLogFile(object obj)
+        {
+            // Get Log
+            var tab = (TabItem)TabControl.SelectedItem;
+            var frame = (IWindowFrame)tab.Content;
+
+            // Open a save file dialog
+            var openfile = new OpenFileDialog
+            {
+                FileName = frame.Log.Name,
+                DefaultExt = ".log",
+                Filter = "Log documents (.log)|*.log|Text documents (.txt)|*.txt",
+                FilterIndex = 0,
+            };
+
+            frame.Log.Enabled = true;
+            if (openfile.ShowDialog(this) == true)
+            {
+                var logFileExporter = ServiceLocator.Instance.Get<ILogFileExporter>();
+                var logs = logFileExporter.GetLogFromFile(openfile.FileName);
+
+                frame.Log.Clear();
+                frame.Log.AddBatch(new Queue<ILogEntry>(logs));
+            }
         }
 
         private void SaveSessionAction(object obj)
@@ -413,6 +442,7 @@
             Add = new DelegateCommand(AddNewListenerAction, b => TabControl.Items.Count < 1);
             ShowPreferences = new DelegateCommand(ShowPreferencesAction);
             ExportLogs = new DelegateCommand(ExportLogsAction, b => TabControl.Items.Count > 0);
+            ImportLogs = new DelegateCommand(OpenLogFile, b => TabControl.Items.Count > 0);
             SaveSession = new DelegateCommand(SaveSessionAction);
             NewSession = new DelegateCommand(NewSessionAction);
             LoadSession = new DelegateCommand(LoadSessionAction);
