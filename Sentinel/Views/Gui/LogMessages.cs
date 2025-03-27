@@ -8,6 +8,7 @@
     using System.Linq;
     using System.Windows.Controls;
     using System.Windows.Threading;
+    using System.Xml;
     using Sentinel.Extractors.Interfaces;
     using Sentinel.Filters.Interfaces;
     using Sentinel.Interfaces;
@@ -59,13 +60,6 @@
 
             PropertyChanged += PropertyChangedHandler;
 
-            var dt = new DispatcherTimer(DispatcherPriority.Normal)
-            {
-                Interval = TimeSpan.FromMilliseconds(200),
-            };
-            dt.Tick += UpdateTick;
-            dt.Start();
-
             filteringService = ServiceLocator.Instance.Get<IFilteringService<IFilter>>();
             if (filteringService != null)
             {
@@ -103,6 +97,13 @@
                     };
                 }
             }
+
+            var dt = new DispatcherTimer(DispatcherPriority.Normal)
+            {
+                Interval = TimeSpan.FromMilliseconds(Preferences?.RefreshRate ?? 200),
+            };
+            dt.Tick += UpdateTick;
+            dt.Start();
 
             InitialiseToolbar();
         }

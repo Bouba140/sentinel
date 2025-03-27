@@ -72,5 +72,8 @@ namespace Sentinel.Interfaces
         // TODO: this should be an integer bound to a numeric control.
         [DataMember]
         string MaximumMessageCount { get; set; }
+
+        [DataMember]
+        int RefreshRate { get; set; }
     }
 }
