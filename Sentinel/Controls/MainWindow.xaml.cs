@@ -21,6 +21,7 @@
     using Sentinel.Classification.Interfaces;
     using Sentinel.Extractors.Interfaces;
     using Sentinel.Filters.Interfaces;
+    using Sentinel.Finders.Interfaces;
     using Sentinel.Highlighters.Interfaces;
     using Sentinel.Interfaces;
     using Sentinel.Interfaces.CodeContracts;
@@ -32,6 +33,7 @@
     using Sentinel.Services.Interfaces;
     using Sentinel.StartUp;
     using Sentinel.Support;
+    using Sentinel.Views.Gui;
     using Sentinel.Views.Interfaces;
     using WpfExtras;
     using WpfExtras.Converters;
@@ -92,6 +94,9 @@
         public ICommand ExportLogs { get; private set; }
 
         // ReSharper disable once MemberCanBePrivate.Global
+        public ICommand ImportLogs { get; private set; }
+
+        // ReSharper disable once MemberCanBePrivate.Global
         public ICommand Exit { get; private set; }
 
         // ReSharper disable once MemberCanBePrivate.Global
@@ -132,6 +137,7 @@
 
         // ReSharper disable once MemberCanBePrivate.Global
         public ISearchExtractor SearchExtractor => ServiceLocator.Instance.Get<ISearchExtractor>();
+        public ISearchFinder Finder => ServiceLocator.Instance.Get<ISearchFinder>();
 
         // ReSharper disable once MemberCanBePrivate.Global
         public ObservableCollection<string> RecentFiles { get; private set; }
@@ -211,6 +217,32 @@
             }
 
             frame.Log.Enabled = restartLogging;
+        }
+
+        private void OpenLogFile(object obj)
+        {
+            // Get Log
+            var tab = (TabItem)TabControl.SelectedItem;
+            var frame = (IWindowFrame)tab.Content;
+
+            // Open a save file dialog
+            var openfile = new OpenFileDialog
+            {
+                FileName = frame.Log.Name,
+                DefaultExt = ".log",
+                Filter = "Log documents (.log)|*.log|Text documents (.txt)|*.txt",
+                FilterIndex = 0,
+            };
+
+            frame.Log.Enabled = true;
+            if (openfile.ShowDialog(this) == true)
+            {
+                var logFileExporter = ServiceLocator.Instance.Get<ILogFileExporter>();
+                var logs = logFileExporter.GetLogFromFile(openfile.FileName);
+
+                frame.Log.Clear();
+                frame.Log.AddBatch(new Queue<ILogEntry>(logs));
+            }
         }
 
         private void SaveSessionAction(object obj)
@@ -410,6 +442,7 @@
             Add = new DelegateCommand(AddNewListenerAction, b => TabControl.Items.Count < 1);
             ShowPreferences = new DelegateCommand(ShowPreferencesAction);
             ExportLogs = new DelegateCommand(ExportLogsAction, b => TabControl.Items.Count > 0);
+            ImportLogs = new DelegateCommand(OpenLogFile, b => TabControl.Items.Count > 0);
             SaveSession = new DelegateCommand(SaveSessionAction);
             NewSession = new DelegateCommand(NewSessionAction);
             LoadSession = new DelegateCommand(LoadSessionAction);
@@ -420,7 +453,14 @@
             var commandLine = Environment.GetCommandLineArgs();
             if (commandLine.Length == 1)
             {
-                Add.Execute(null);
+                if(recentFilePathList.Any())
+                {                  
+                    ProcessCommandLine(recentFilePathList.Take(1));
+                }
+                else
+                {
+                    Add.Execute(null);
+                }
             }
             else
             {
@@ -677,36 +717,58 @@
                 case "Extract":
                     BindSearchToSearchExtractor();
                     break;
+                case "Find":
+                    BindFindToFinder();
+                    break;
             }
         }
 
         private void BindSearchToSearchExtractor()
-        {
+        {            
             SearchRibbonTextBox.SetBinding(TextBox.TextProperty, CreateBinding("Pattern", SearchExtractor));
             SearchModeListBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Mode", SearchExtractor));
             SearchTargetComboBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Field", SearchExtractor));
 
             HighlightToggleButton.IsChecked = false;
+            FindToggleButton.IsChecked = false;
             FilterToggleButton.IsChecked = false;
+            FindNextButton.Visibility = Visibility.Hidden;
+            FindPreviousButton.Visibility = Visibility.Hidden;
         }
 
-        private Binding CreateBinding(string path, object source)
+        private void BindFindToFinder()
+        {
+            SearchRibbonTextBox.SetBinding(TextBox.TextProperty, CreateBinding("Pattern", Finder));
+            SearchModeListBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Mode", Finder));
+            SearchTargetComboBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Field", Finder));
+
+            HighlightToggleButton.IsChecked = false;
+            FilterToggleButton.IsChecked = false;
+            ExtractToggleButton.IsChecked = false;
+            FindNextButton.Visibility = Visibility.Visible;
+            FindPreviousButton.Visibility = Visibility.Visible;
+        }
+
+        private Binding CreateBinding(string path, object source, UpdateSourceTrigger trigger = UpdateSourceTrigger.PropertyChanged)
         {
             return new Binding
             {
                 Source = source,
                 Path = new PropertyPath(path),
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                UpdateSourceTrigger = trigger,
             };
         }
 
         private void BindSearchToSearchFilter()
-        {
+        {            
             SearchRibbonTextBox.SetBinding(TextBox.TextProperty, CreateBinding("Pattern", SearchFilter));
             SearchModeListBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Mode", SearchFilter));
             SearchTargetComboBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Field", SearchFilter));
             HighlightToggleButton.IsChecked = false;
             ExtractToggleButton.IsChecked = false;
+            FindToggleButton.IsChecked = false;
+            FindNextButton.Visibility = Visibility.Hidden;
+            FindPreviousButton.Visibility = Visibility.Hidden;
         }
 
         private void BindSearchToSearchHighlighter()
@@ -716,6 +778,9 @@
             SearchTargetComboBox.SetBinding(Selector.SelectedItemProperty, CreateBinding("Field", Search));
             FilterToggleButton.IsChecked = false;
             ExtractToggleButton.IsChecked = false;
+            FindToggleButton.IsChecked = false;
+            FindNextButton.Visibility = Visibility.Hidden;
+            FindPreviousButton.Visibility = Visibility.Hidden;
         }
 
         private void RemoveBindingReferences()
@@ -831,6 +896,14 @@
                 ItemsControl.ItemsSourceProperty,
                 new Binding { Source = customClassifyiers });
 
+
+            var currentPresenter = ViewManager?.Viewers?.FirstOrDefault()?.PrimaryView?.Presenter;
+            if(currentPresenter is LogMessagesControl)
+            {
+                FindNextButton.SetBinding(Button.CommandProperty, CreateBinding("FindNext", currentPresenter, UpdateSourceTrigger.LostFocus));
+                FindPreviousButton.SetBinding(Button.CommandProperty, CreateBinding("FindPrevious", currentPresenter, UpdateSourceTrigger.LostFocus));
+            }
+
             BindToSearchElements();
 
             // Column view buttons
@@ -857,6 +930,7 @@
             HighlightToggleButton.SetBinding(ToggleButton.IsCheckedProperty, CreateBinding("Enabled", Search));
             FilterToggleButton.SetBinding(ToggleButton.IsCheckedProperty, CreateBinding("Enabled", SearchFilter));
             ExtractToggleButton.SetBinding(ToggleButton.IsCheckedProperty, CreateBinding("Enabled", SearchExtractor));
+            FindToggleButton.SetBinding(ToggleButton.IsCheckedProperty, CreateBinding("Enabled", Finder));
 
             if (Search.Enabled)
             {
@@ -869,6 +943,10 @@
             else if (SearchExtractor.Enabled)
             {
                 BindSearchToSearchExtractor();
+            }
+            else if(Finder.Enabled)
+            {
+                BindFindToFinder();
             }
         }
 

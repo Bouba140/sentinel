@@ -12,7 +12,8 @@
         public void Initialise()
         {
             Name = "SearchExtractor";
-            Field = LogEntryFields.System;
+            Field = LogEntryFields.Description;
+            Mode = MatchMode.CaseInsensitive;
             Pattern = string.Empty;
         }
     }

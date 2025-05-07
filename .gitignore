@@ -165,3 +165,7 @@ $RECYCLE.BIN/
 packages
 /.vs
 /.idea
+
+# setup
+*.exe
+/publish

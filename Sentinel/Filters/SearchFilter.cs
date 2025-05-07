@@ -11,7 +11,8 @@
         public void Initialise()
         {
             Name = "SearchFilter";
-            Field = LogEntryFields.System;
+            Field = LogEntryFields.Description;
+            Mode =  MatchMode.CaseInsensitive;
             Pattern = string.Empty;
         }
     }

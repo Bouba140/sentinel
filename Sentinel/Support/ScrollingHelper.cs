@@ -5,10 +5,12 @@
     using System.Windows.Controls;
     using System.Windows.Media;
     using System.Windows.Threading;
+    using Sentinel.Interfaces;
 
     public static class ScrollingHelper
     {
         public delegate void VoidFunctionHandler(ListBox listBox);
+        public delegate void VoidFunctionItemHandler(ListBox listBox, ILogEntry item);
 
         public static Visual GetDescendantByType(Visual element, Type type)
         {
@@ -53,10 +55,31 @@
             }
         }
 
+        public static void ScrollToItem(Dispatcher dispatcher, ListBox listBox, ILogEntry item)
+        {
+            if (dispatcher.CheckAccess())
+            {
+                listBox.ScrollIntoView(item);
+            }
+            else
+            {
+                dispatcher.BeginInvoke(
+                    DispatcherPriority.Send,
+                    new VoidFunctionItemHandler(SelectEntry),
+                    listBox,
+                    item);
+            }
+        }
+
         private static void SelectLastEntry(ListBox listBox)
         {
             var scrollViewer = GetDescendantByType(listBox, typeof(ScrollViewer)) as ScrollViewer;
             scrollViewer?.ScrollToEnd();
+        }
+
+        private static void SelectEntry(ListBox listBox, ILogEntry item)
+        {
+            listBox.ScrollIntoView(item);
         }
     }
 }

@@ -152,25 +152,37 @@
                                           ToolTip="Vista and Windows 7 put spacing around each row that takes up a fair amount of space, enabling this option tries to reduce the space to something like that used by Windows XP"
                                           IsChecked="{Binding Preferences.UseTighterRows}" />
                             </GroupBox>
-                            <GroupBox Header="Message limits">
-                                <StackPanel Orientation="Horizontal"
+                            <GroupBox Header="Message performances">
+                                <StackPanel Orientation="Vertical"
                                             Margin="5"
                                             VerticalAlignment="Center">
-                                    <CheckBox IsChecked="{Binding Preferences.LimitMessages}"
-                                              HorizontalAlignment="Left"
-                                              VerticalAlignment="Bottom"
-                                              Margin="0,0,0,5"
-                                              Content="Limit the maximum number of messages retained" />
-                                    <StackPanel IsEnabled="{Binding Preferences.LimitMessages}"
-                                                Orientation="Horizontal">
-                                        <Label Margin="20,0,0,0">Message count:</Label>
+                                    <StackPanel Orientation="horizontal"
+                                            Margin="5"
+                                            VerticalAlignment="Center">
+                                        <CheckBox IsChecked="{Binding Preferences.LimitMessages}"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Bottom"
+                                                Margin="0,0,0,5"
+                                                Content="Limit the maximum number of messages retained" />
+                                        <StackPanel IsEnabled="{Binding Preferences.LimitMessages}"
+                                                    Orientation="Horizontal">
+                                            <Label Margin="20,0,0,0">Message count:</Label>
+                                            <controls:IntegerTextBox
+                                                Text="{Binding Preferences.MaximumMessageCount, UpdateSourceTrigger=PropertyChanged}"
+                                                Margin="10,0,0,0"
+                                                Width="100"
+                                                VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Margin="20,0,0,0">Refresh Rate:</Label>
                                         <controls:IntegerTextBox
-                                            Text="{Binding Preferences.MaximumMessageCount, UpdateSourceTrigger=PropertyChanged}"
+                                            Text="{Binding Preferences.RefreshRate, UpdateSourceTrigger=PropertyChanged}"
                                             Margin="10,0,0,0"
                                             Width="100"
-                                            VerticalAlignment="Center" />
+                                            VerticalAlignment="Center"/>
                                     </StackPanel>
-                                </StackPanel>
+                                </StackPanel>                            
                             </GroupBox>
                             <GroupBox Header="Layout">
                                 <CheckBox Margin="5"

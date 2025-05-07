@@ -2,6 +2,7 @@
 {
     using System;
     using System.ComponentModel;
+    using System.Linq;
     using System.Runtime.InteropServices;
     using System.Text;
     using System.Windows;
@@ -9,6 +10,7 @@
     using System.Windows.Data;
     using System.Windows.Input;
     using log4net;
+    using Sentinel.Finders.Interfaces;
     using Sentinel.Highlighters;
     using Sentinel.Highlighters.Interfaces;
     using Sentinel.Interfaces;
@@ -17,6 +19,7 @@
     using Sentinel.Services;
     using Sentinel.Support;
     using Sentinel.Support.Wpf;
+    using Sentinel.WpfExtras;
 
     /// <summary>
     /// Interaction logic for LogMessagesControl.xaml.
@@ -24,11 +27,18 @@
     public partial class LogMessagesControl : UserControl
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(LogMessagesControl));
+        
+        public ICommand FindPrevious { get; private set; }
+        public ICommand FindNext { get; private set; }
+
+        private readonly IFinderService<IFinder> finderService = ServiceLocator.Instance.Get<IFinderService<IFinder>>();
 
         public LogMessagesControl()
         {
             InitializeComponent();
 
+            FindPrevious = new DelegateCommand(FindPreviousIndex);
+            FindNext = new DelegateCommand(FindNextIndex);
             AddCopyCommandBinding();
 
             Highlight = ServiceLocator.Instance.Get<IHighlightingService<IHighlighter>>();
@@ -78,6 +88,45 @@
         public void ScrollToEnd()
         {
             ScrollingHelper.ScrollToEnd(Dispatcher, messages);
+        }     
+
+        private void FindPreviousIndex(object obj)
+        {
+            if(messages.Items.IsEmpty) return;
+            var currentIndex = messages.SelectedIndex;
+            if(currentIndex < 0 
+            || currentIndex >= messages.Items.Count - 1)
+            {
+                currentIndex = 0;
+            }
+            var nextItem  = messages.Items.Cast<ILogEntry>().Take(currentIndex).ToList().FindLast(finderService.IsMatch);
+
+            if(nextItem is null) return;
+
+            messages.ScrollIntoView(nextItem);
+            messages.SelectedItem = nextItem;
+        }
+
+        private void FindNextIndex(object obj)
+        {           
+            if(messages.Items.IsEmpty) return;
+
+            var currentIndex = messages.SelectedIndex +1;
+            if(currentIndex < 0 
+            || currentIndex >= messages.Items.Count - 1)
+            {
+                currentIndex = 0;
+            }
+            var nextIndex  = messages.Items.Cast<ILogEntry>().ToList().FindIndex(currentIndex, finderService.IsMatch);
+
+            if(nextIndex == -1)
+            {
+                return;
+            }
+
+            var nextItem = messages.Items.GetItemAt(nextIndex);
+            messages.ScrollIntoView(nextItem);
+            messages.SelectedItem = nextItem;
         }
 
         private void SetTypeColumnPreferences(int selectedTypeOption)

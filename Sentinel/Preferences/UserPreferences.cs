@@ -57,6 +57,8 @@
         private bool limitMessages = false;
 
         private string maximumMessageCount;
+ 
+        private int refreshRate = 200;
 
         public UserPreferences()
         {
@@ -412,6 +414,19 @@
                 {
                     maximumMessageCount = value;
                     OnPropertyChanged(nameof(MaximumMessageCount));
+                }
+            }
+        }
+
+        public int RefreshRate
+        {
+            get => refreshRate;
+            set
+            {
+                if (refreshRate != value)
+                {
+                    refreshRate = value;
+                    OnPropertyChanged(nameof(RefreshRate));
                 }
             }
         }

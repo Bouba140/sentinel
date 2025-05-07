@@ -30,7 +30,11 @@
         <ListView x:Name="messages"
                   Grid.Column="0"
                   ScrollViewer.CanContentScroll="True"
+                  Height="auto"
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  VirtualizingStackPanel.VirtualizationMode="Recycling"             
                   ItemsSource="{Binding Messages}">
+                  
             <ListView.View>
                 <GridView>
                     <Controls:FixedWidthColumn Header="Type">
