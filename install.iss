@@ -1,4 +1,4 @@
-#define MyAppVersion "0.15.0.0"
+#define MyAppVersion "0.15.0.1"
 
 [Setup]
 AppName=Sentinel
