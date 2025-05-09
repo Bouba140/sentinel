@@ -6,7 +6,7 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>Sentinel</AssemblyName>
     <ApplicationIcon>Sentinel.ico</ApplicationIcon>
-    <Version>0.15.0.0</Version>
+    <Version>0.15.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
